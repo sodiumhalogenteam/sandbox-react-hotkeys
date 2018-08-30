@@ -33,7 +33,7 @@ const Styles = styled.div`
 `;
 
 const StyledHotKeys = styled(HotKeys)`
-  outline: none;
+  outline: 0;
 `;
 
 const keyMap = {
