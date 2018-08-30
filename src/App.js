@@ -43,7 +43,7 @@ const keyMap = {
   focusQuery: '/',
   focusTag: '`',
   goToTable: 't',
-  goToNodes: 'n',
+  goToForce: 'f',
   goToTimeline: 'T',
 };
 
@@ -98,7 +98,7 @@ class App extends Component {
           goToTable: () => {
             this.changeResultsFormatMenu('table');
           },
-          goToNodes: () => {
+          goToForce: () => {
             this.changeResultsFormatMenu('force');
           },
           goToTimeline: () => {
