@@ -46,9 +46,15 @@ const keyMap = {
 
 class App extends Component {
   state = {
+    disableHotkeys: false,
     resultsFormatMenu: 'force',
     isPanelOpen: false,
   };
+
+  componentDidMount() {
+    //focus the user onto the top component on page load
+    document.querySelector('#hotkeys').focus();
+  }
 
   changeResultsFormatMenu = value => {
     this.setState({resultsFormatMenu: value});
@@ -58,34 +64,38 @@ class App extends Component {
     this.setState({isPanelOpen: !this.state.isPanelOpen});
   };
 
-  componentDidMount() {
-    //focus the user onto the top component on page load
-    document.querySelector('#hotkeys').focus();
-  }
+  onFocus = () => {
+    this.setState({disableHotkeys: true});
+  };
+  onBlur = () => {
+    this.setState({disableHotkeys: false});
+  };
 
   render() {
-    const keyHandlers = {
-      focusQuery: () => {
-        document.querySelector('input').focus();
-        return false;
-      },
-      togglePanel: this.togglePanel,
-      goToTable: () => {
-        this.changeResultsFormatMenu('table');
-      },
-      goToNodes: () => {
-        this.changeResultsFormatMenu('force');
-      },
-      goToTimeline: () => {
-        this.changeResultsFormatMenu('timeline');
-      },
-    };
+    const keyHandlers = this.state.disableHotkeys
+      ? {}
+      : {
+          focusQuery: () => {
+            document.querySelector('input').focus();
+            return false;
+          },
+          togglePanel: this.togglePanel,
+          goToTable: () => {
+            this.changeResultsFormatMenu('table');
+          },
+          goToNodes: () => {
+            this.changeResultsFormatMenu('force');
+          },
+          goToTimeline: () => {
+            this.changeResultsFormatMenu('timeline');
+          },
+        };
     return (
       <StyledHotKeys id="hotkeys" keyMap={keyMap} handlers={keyHandlers}>
         <Styles>
           <div className="Querybar">
             <label htmlFor="">Query Bar</label>
-            <input type="text" placeholder="search me pls" />
+            <input type="text" placeholder="search me pls" onFocus={this.onFocus} onBlur={this.onBlur} />
           </div>
           <div className="Container">
             <div className="Body">
