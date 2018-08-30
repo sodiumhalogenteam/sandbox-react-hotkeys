@@ -1,20 +1,22 @@
 import React, {Component} from 'react';
 import styled from 'styled-components';
 import {HotKeys} from 'react-hotkeys';
+import TextInput from './TextInput';
 
 const Styles = styled.div`
   height: 100vh;
   width: 100vh;
+  input {
+    height: 20px;
+    margin: 0 12px;
+    padding: 10px;
+  }
   .Querybar {
     display: flex;
     width: 100%;
     height: 80px;
     border: 1px solid #ccc;
     padding: 15px 0;
-    input {
-      height: 40px;
-      margin: 0 12px;
-    }
   }
   .Container {
     display: flex;
@@ -39,12 +41,20 @@ const StyledHotKeys = styled(HotKeys)`
 const keyMap = {
   togglePanel: 'p',
   focusQuery: '/',
+  focusTag: '`',
   goToTable: 't',
   goToNodes: 'n',
   goToTimeline: 'T',
 };
 
 class App extends Component {
+  constructor() {
+    super();
+
+    this.inputQueryRef = React.createRef();
+    this.inputTagRef = React.createRef();
+  }
+
   state = {
     disableHotkeys: false,
     resultsFormatMenu: 'force',
@@ -64,10 +74,11 @@ class App extends Component {
     this.setState({isPanelOpen: !this.state.isPanelOpen});
   };
 
-  onFocus = () => {
+  onInputFocus = () => {
     this.setState({disableHotkeys: true});
   };
-  onBlur = () => {
+
+  onInputBlur = () => {
     this.setState({disableHotkeys: false});
   };
 
@@ -76,7 +87,11 @@ class App extends Component {
       ? {}
       : {
           focusQuery: () => {
-            document.querySelector('input').focus();
+            this.inputQueryRef.current.focus();
+            return false;
+          },
+          focusTag: () => {
+            this.inputTagRef.current.focus();
             return false;
           },
           togglePanel: this.togglePanel,
@@ -94,8 +109,13 @@ class App extends Component {
       <StyledHotKeys id="hotkeys" keyMap={keyMap} handlers={keyHandlers}>
         <Styles>
           <div className="Querybar">
-            <label htmlFor="">Query Bar</label>
-            <input type="text" placeholder="search me pls" onFocus={this.onFocus} onBlur={this.onBlur} />
+            <TextInput
+              customeRef={this.inputQueryRef}
+              placeholder="type here pls"
+              label="search"
+              onInputFocus={this.onInputFocus}
+              onInputBlur={this.onInputBlur}
+            />
           </div>
           <div className="Container">
             <div className="Body">
@@ -115,6 +135,13 @@ class App extends Component {
             </div>
             <div className="Panel">
               <button onClick={this.togglePanel}>{this.state.isPanelOpen ? 'panel is open' : 'panel is closed'}</button>
+              <TextInput
+                customeRef={this.inputTagRef}
+                placeholder="type here pls"
+                label="add tag"
+                onInputFocus={this.onInputFocus}
+                onInputBlur={this.onInputBlur}
+              />
             </div>
           </div>
         </Styles>
