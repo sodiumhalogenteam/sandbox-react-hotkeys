@@ -1,7 +1,10 @@
-import React, {Component} from 'react';
-import styled from 'styled-components';
+import React, {Component} from "react";
+import styled from "styled-components";
+import {HotKeys} from "react-hotkeys";
 
 const Styles = styled.div`
+  height: 100vh;
+  width: 100vh;
   .Querybar {
     display: flex;
     width: 100%;
@@ -29,9 +32,17 @@ const Styles = styled.div`
   }
 `;
 
+const StyledHotKeys = styled(HotKeys)`
+  outline: none;
+`;
+
+const keyMap = {
+  togglePanel: "p",
+};
+
 class App extends Component {
   state = {
-    resultsFormatMenu: 'force',
+    resultsFormatMenu: "force",
     isPanelOpen: false,
   };
 
@@ -43,34 +54,44 @@ class App extends Component {
     this.setState({isPanelOpen: !this.state.isPanelOpen});
   };
 
-  render() {
-    return (
-      <Styles>
-        <div className="Querybar">
-          <label htmlFor="">Query Bar</label>
-          <input type="text" />
-        </div>
-        <div className="Container">
-          <div className="Body">
-            <select
-              name="resultsFormatMenu"
-              id="resultsFormatMenu"
-              value={this.state.resultsFormatMenu}
-              onChange={e => this.changeResultsFormatMenu(e)}>
-              <option value="table">Table</option>
-              <option value="force">Force</option>
-              <option value="timeline">Timeline</option>
-            </select>
+  componentDidMount() {
+    //focus the user onto the top component on page load
+    document.querySelector("#hotkeys").focus();
+  }
 
-            {(this.state.resultsFormatMenu === 'table' && <p>Table here</p>) ||
-              (this.state.resultsFormatMenu === 'force' && <p>Force here</p>) ||
-              (this.state.resultsFormatMenu === 'timeline' && <p>Timeline here</p>)}
+  render() {
+    const keyHandlers = {
+      togglePanel: this.togglePanel,
+    };
+    return (
+      <StyledHotKeys id="hotkeys" keyMap={keyMap} handlers={keyHandlers}>
+        <Styles>
+          <div className="Querybar">
+            <label htmlFor="">Query Bar</label>
+            <input type="text" />
           </div>
-          <div className="Panel">
-            <button onClick={this.togglePanel}>{this.state.isPanelOpen ? 'panel is open' : 'panel is closed'}</button>
+          <div className="Container">
+            <div className="Body">
+              <select
+                name="resultsFormatMenu"
+                id="resultsFormatMenu"
+                value={this.state.resultsFormatMenu}
+                onChange={e => this.changeResultsFormatMenu(e)}>
+                <option value="table">Table</option>
+                <option value="force">Force</option>
+                <option value="timeline">Timeline</option>
+              </select>
+
+              {(this.state.resultsFormatMenu === "table" && <p>Table here</p>) ||
+                (this.state.resultsFormatMenu === "force" && <p>Force here</p>) ||
+                (this.state.resultsFormatMenu === "timeline" && <p>Timeline here</p>)}
+            </div>
+            <div className="Panel">
+              <button onClick={this.togglePanel}>{this.state.isPanelOpen ? "panel is open" : "panel is closed"}</button>
+            </div>
           </div>
-        </div>
-      </Styles>
+        </Styles>
+      </StyledHotKeys>
     );
   }
 }
